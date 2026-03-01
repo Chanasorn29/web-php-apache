@@ -14,7 +14,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.log('MongoDB Error:', err));
 
 // Routes
-app.use('/api/memes', require('./routes/memes'));
+app.use('/api/quotes', require('./routes/quotes'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/mood', require('./routes/mood'));
 

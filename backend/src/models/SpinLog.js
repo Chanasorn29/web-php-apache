@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const spinLogSchema = new mongoose.Schema({
   category: String,
-  memeId: mongoose.Schema.Types.ObjectId,
+  quoteId: mongoose.Schema.Types.ObjectId,
   spunAt: { type: Date, default: Date.now }
 });
 

@@ -3,7 +3,7 @@ version: '3.8'
 services:
   mongodb:
     image: mongo:7
-    container_name: meme_db
+    container_name: quote_db
     ports:
       - "27017:27017"
     volumes:
@@ -11,7 +11,7 @@ services:
 
   backend:
     build: ./backend
-    container_name: meme_backend
+    container_name: quote_backend
     ports:
       - "3001:5000"
     env_file:
