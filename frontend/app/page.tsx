@@ -47,7 +47,7 @@ export default function HomePage() {
 
     try {
       const response = await fetch(
-        `http://localhost:3001/api/quotes/random?category=${moodKey}`
+        `http://172.16.8.211:3001/api/quotes/random?category=${moodKey}`
       );
 
       if (!response.ok) {
