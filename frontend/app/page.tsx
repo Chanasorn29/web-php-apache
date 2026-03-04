@@ -12,7 +12,7 @@ export default function HomePage() {
     >
       {/* Header Section - ปรับขนาด text ให้เล็กลงบนมือถือ (text-2xl) และใหญ่ขึ้นบนจอคอม (md:text-4xl) */}
       <h1 className="text-2xl md:text-4xl text-[#000000] mb-8 font-normal px-2">
-        Here is something gentle today.
+        Here&#96;s something gentle today.
       </h1>
 
       <p className="text-sm md:text-base text-[#000000] mb-6 md:mb-3 uppercase tracking-widest font-normal">
