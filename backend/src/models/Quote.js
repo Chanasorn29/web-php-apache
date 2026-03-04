@@ -18,13 +18,8 @@ const quoteSchema = new mongoose.Schema(
     },
   },
   {
-    toJSON: {
-      transform: (doc, ret) => {
-        delete ret.__v;
-        delete ret.createdAt;
-        return ret;
-      },
-    },
+    versionKey: false,
+    timeseries: false,
   },
 );
 

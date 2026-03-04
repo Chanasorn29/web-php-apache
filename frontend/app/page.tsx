@@ -108,7 +108,7 @@ export default function HomePage() {
       className={`${josefin.className} min-h-screen bg-[#FAFFC7] flex flex-col items-center justify-start pt-24 md:pt-32 p-4 text-center`}
     >
       <h1 className="text-2xl md:text-4xl text-[#000000] mb-8 font-normal px-2">
-        Here's something gentle today.
+        Here&#96;s something gentle today.
       </h1>
 
       <p className="text-sm md:text-base text-[#000000] mb-6 md:mb-3 uppercase tracking-widest font-normal">
