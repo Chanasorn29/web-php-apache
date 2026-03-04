@@ -35,13 +35,13 @@ export default function HomePage() {
   const [currentMood, setCurrentMood] = useState<EmojiType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 🎲 สุ่ม emoji
+  // สุ่ม emoji
   const getRandomEmoji = (): EmojiType => {
     const emojis = Object.keys(moodMap) as EmojiType[];
     return emojis[Math.floor(Math.random() * emojis.length)];
   };
 
-  // 🔥 ดึง quote จาก backend
+  // ดึง quote จาก backend
   const fetchRandomQuote = async (moodKey: string) => {
     setIsLoading(true);
 
@@ -70,14 +70,14 @@ export default function HomePage() {
     setIsLoading(false);
   };
 
-  // 🚀 โหลดหน้า → สุ่ม mood อัตโนมัติ
+  // โหลดหน้า → สุ่ม mood อัตโนมัติ
   useEffect(() => {
     const randomEmoji = getRandomEmoji();
     setCurrentMood(randomEmoji);
     fetchRandomQuote(moodMap[randomEmoji]);
   }, []);
 
-  // 😊 เปลี่ยนอารมณ์
+  // เปลี่ยนอารมณ์
   const handleMoodChange = (emoji: EmojiType) => {
     if (currentMood === emoji) {
       setCurrentMood(null);
@@ -92,7 +92,7 @@ export default function HomePage() {
     fetchRandomQuote(moodMap[emoji]);
   };
 
-  // 🎲 ปุ่ม Generate (ไม่แก้)
+  // ปุ่ม Generate
   const handleGenerate = () => {
     if (currentMood) {
       fetchRandomQuote(moodMap[currentMood]);
@@ -151,8 +151,8 @@ export default function HomePage() {
         <hr className="border-[#000000] mb-8 md:mb-10 opacity-20 mx-auto w-4/5" />
 
         <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-6 font-normal">
-          
-          {/* ❤️ Save */}
+
+          {/* Save */}
           <button
             onClick={() => {
               if (!quote.text || !quote.author) return;
@@ -195,9 +195,9 @@ export default function HomePage() {
             ♡ Save
           </button>
 
-          {/* 🎲 Generate */}
+          {/* Generate */}
           <button
-            onClick={handleGenerate}
+            onClick={handleGenerate} 
             className="bg-[#FAFFC7] text-[#000000] px-10 py-3 rounded-full hover:scale-110 transition-all shadow-sm"
           >
             Generate
