@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Josefin_Slab } from "next/font/google";
 
 const josefin = Josefin_Slab({
@@ -5,12 +8,105 @@ const josefin = Josefin_Slab({
   weight: ["400"],
 });
 
+interface QuoteData {
+  text: string;
+  author: string;
+  savedAt?: string;
+}
+
+const moodMap = {
+  "😌": "calm",
+  "😊": "happy",
+  "🥰": "romantic",
+  "🤩": "motivation",
+  "🧐": "reflective",
+  "🥹": "sad",
+  "😇": "grateful",
+} as const;
+
+type EmojiType = keyof typeof moodMap;
+
 export default function HomePage() {
+  const [quote, setQuote] = useState<QuoteData>({
+    text: "Loading...",
+    author: "",
+  });
+
+  const [currentMood, setCurrentMood] = useState<EmojiType | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // สุ่ม emoji
+  const getRandomEmoji = (): EmojiType => {
+    const emojis = Object.keys(moodMap) as EmojiType[];
+    return emojis[Math.floor(Math.random() * emojis.length)];
+  };
+
+  // ดึง quote จาก backend
+  const fetchRandomQuote = async (moodKey: string) => {
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(
+        `http://localhost:3001/api/quotes/random?category=${moodKey}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
+
+      const data = await response.json();
+
+      setQuote({
+        text: data.text,
+        author: data.author,
+      });
+    } catch (error) {
+      setQuote({
+        text: `No ${moodKey} quotes available right now.`,
+        author: "System",
+      });
+    }
+
+    setIsLoading(false);
+  };
+
+  // โหลดหน้า → สุ่ม mood อัตโนมัติ
+  useEffect(() => {
+    const randomEmoji = getRandomEmoji();
+    setCurrentMood(randomEmoji);
+    fetchRandomQuote(moodMap[randomEmoji]);
+  }, []);
+
+  // เปลี่ยนอารมณ์
+  const handleMoodChange = (emoji: EmojiType) => {
+    if (currentMood === emoji) {
+      setCurrentMood(null);
+      setQuote({
+        text: "Pick a mood to get started ✨",
+        author: "",
+      });
+      return;
+    }
+
+    setCurrentMood(emoji);
+    fetchRandomQuote(moodMap[emoji]);
+  };
+
+  // ปุ่ม Generate
+  const handleGenerate = () => {
+    if (currentMood) {
+      fetchRandomQuote(moodMap[currentMood]);
+    } else {
+      const randomEmoji = getRandomEmoji();
+      setCurrentMood(randomEmoji);
+      fetchRandomQuote(moodMap[randomEmoji]);
+    }
+  };
+
   return (
     <div
-      className={`${josefin.className} min-h-screen bg-[#FAFFC7] flex flex-col items-center justify-center p-4 text-center`}
+      className={`${josefin.className} min-h-screen bg-[#FAFFC7] flex flex-col items-center justify-start pt-24 md:pt-32 p-4 text-center`}
     >
-      {/* Header Section - ปรับขนาด text ให้เล็กลงบนมือถือ (text-2xl) และใหญ่ขึ้นบนจอคอม (md:text-4xl) */}
       <h1 className="text-2xl md:text-4xl text-[#000000] mb-8 font-normal px-2">
         Here&#96;s something gentle today.
       </h1>
@@ -19,13 +115,18 @@ export default function HomePage() {
         Mood selection
       </p>
 
-      {/* Mood Selector Bar - เพิ่ม overflow-x-auto เพื่อให้เลื่อนซ้ายขวาได้ถ้ามือถือจอแคบมาก */}
+      {/* Mood Selector */}
       <div className="max-w-full overflow-x-auto no-scrollbar">
         <div className="bg-[#FFD1D4] rounded-[20px] px-4 md:px-8 py-3 flex gap-4 md:gap-6 shadow-sm mb-8 md:mb-12 border border-black/5 mx-auto w-max">
-          {["😌", "😊", "🥰", "😎", "🧐", "🥹", "😇"].map((emoji, index) => (
+          {(Object.keys(moodMap) as EmojiType[]).map((emoji) => (
             <button
-              key={index}
-              className="text-2xl md:text-3xl hover:scale-125 transition-transform shrink-0"
+              key={emoji}
+              onClick={() => handleMoodChange(emoji)}
+              className={`text-2xl md:text-3xl transition-all duration-300 shrink-0 ${
+                currentMood === emoji
+                  ? "scale-125 drop-shadow-md opacity-100"
+                  : "hover:scale-110 opacity-40"
+              }`}
             >
               {emoji}
             </button>
@@ -33,43 +134,71 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Quote Card - ปรับ Padding (p-8 vs p-16) และความกว้างตามหน้าจอ */}
-      <div className="bg-[#FFD1D4] w-full max-w-sm md:max-w-xl rounded-[20px] p-8 md:p-16 text-center shadow-lg relative border border-black/5">
-        {/* ข้อความ Quote - ใช้ md:whitespace-nowrap เฉพาะจอใหญ่ บนมือถือให้ตัดบรรทัดได้เพื่อไม่ให้ล้น */}
-        <p className="text-xl md:text-3xl text-[#000000] mb-4 md:mb-6 leading-relaxed font-normal md:whitespace-nowrap">
-          Stillness is a quiet form of strength.
+      {/* Quote Card */}
+      <div
+        className={`bg-[#FFD1D4] w-full max-w-sm md:max-w-xl rounded-[20px] p-8 md:p-16 text-center shadow-lg border border-black/5 transition-opacity ${
+          isLoading ? "opacity-50" : "opacity-100"
+        }`}
+      >
+        <p className="text-xl md:text-3xl text-[#000000] mb-4 md:mb-6 leading-relaxed font-normal">
+          "{quote.text}"
         </p>
 
         <p className="text-lg md:text-xl text-gray-500 mb-8 md:mb-10 font-normal">
-          - Unknown
+          {quote.author && `- ${quote.author}`}
         </p>
 
         <hr className="border-[#000000] mb-8 md:mb-10 opacity-20 mx-auto w-4/5" />
 
         <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-6 font-normal">
-          {/* ปุ่ม Save */}
+
+          {/* Save */}
           <button
-            className="
-            bg-[#FAFFC7] text-[#000000]
-            px-10 py-3 rounded-full
-            flex items-center justify-center gap-2
-            transition-all duration-300 ease-out
-            hover:scale-110 hover:bg-white hover:shadow-md
-            active:bg-[#FFD1D4] active:scale-95
-          "
+            onClick={() => {
+              if (!quote.text || !quote.author) return;
+
+              try {
+                const existing = localStorage.getItem("saved_quotes");
+
+                const savedQuotes: QuoteData[] = existing
+                  ? JSON.parse(existing)
+                  : [];
+
+                const isDuplicate = savedQuotes.some(
+                  (q) =>
+                    q.text === quote.text &&
+                    q.author === quote.author
+                );
+
+                if (isDuplicate) {
+                  alert("Already saved ♡");
+                  return;
+                }
+
+                const newQuote: QuoteData = {
+                  ...quote,
+                  savedAt: new Date().toISOString(),
+                };
+
+                localStorage.setItem(
+                  "saved_quotes",
+                  JSON.stringify([...savedQuotes, newQuote])
+                );
+
+                alert("Saved successfully ♡");
+              } catch (error) {
+                console.error("Save error:", error);
+              }
+            }}
+            className="bg-[#FAFFC7] text-[#000000] px-10 py-3 rounded-full hover:scale-110 transition-all shadow-sm"
           >
-            <span className="text-xl">♡</span> Save
+            ♡ Save
           </button>
 
-          {/* ปุ่ม Generate */}
+          {/* Generate */}
           <button
-            className="
-            bg-[#FAFFC7] text-[#000000]
-            px-10 py-3 rounded-full
-            transition-all duration-300 ease-out
-            hover:scale-110 hover:bg-white hover:shadow-md
-            active:bg-[#FFD1D4] active:scale-95
-          "
+            onClick={handleGenerate} 
+            className="bg-[#FAFFC7] text-[#000000] px-10 py-3 rounded-full hover:scale-110 transition-all shadow-sm"
           >
             Generate
           </button>
