@@ -175,8 +175,9 @@ export default function HomePage() {
                   return;
                 }
 
-                const newQuote: QuoteData = {
+                const newQuote = {
                   ...quote,
+                  mood: currentMood ? moodMap[currentMood] : undefined,
                   savedAt: new Date().toISOString(),
                 };
 
