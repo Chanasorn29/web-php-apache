@@ -30,8 +30,9 @@ const savedQuotes = [
 
 export default function DashboardPage() {
   return (
-    <div className={`${josefin.className} min-h-screen bg-[#FAFFC7] flex flex-col items-center justify-center p-4 text-center`}>
-
+    <div
+      className={`${josefin.className} min-h-screen bg-[#FAFFC7] flex flex-col items-center justify-center p-4 text-center`}
+    >
       {/* Mood Tracking */}
       <h2 className="text-3xl mb-6">Mood Tracking</h2>
 
@@ -60,20 +61,18 @@ export default function DashboardPage() {
       <h2 className="text-2xl mb-4">Saved ♡</h2>
 
       <div className="bg-[#FFD1D4] w-full max-w-sm md:max-w-xl rounded-[20px] p-8 md:p-16 text-center shadow-lg relative border border-black/5">
-
         {savedQuotes.map((q, i) => (
           <div
             key={i}
             className="flex justify-between items-center mb-3 last:mb-0"
           >
             <p className="italic">
-              "{q.text}" <span className="text-gray-500">- Unknown</span>
+              {q.text} <span className="text-gray-500">- Unknown</span>
             </p>
 
             <span className="text-sm">{q.mood}</span>
           </div>
         ))}
-
       </div>
     </div>
   );
