@@ -1,7 +1,14 @@
 "use client";
 
+<<<<<<< Updated upstream
 import { useState, useEffect } from "react";
 import { Josefin_Slab } from "next/font/google";
+=======
+import { useState, useEffect } from 'react';
+import { Josefin_Slab } from 'next/font/google';
+// Import seed quotes used for random quote generation
+import { quotes } from '@/seed/quotes';
+>>>>>>> Stashed changes
 
 const josefin = Josefin_Slab({
   subsets: ["latin"],
@@ -27,11 +34,15 @@ const moodMap = {
 type EmojiType = keyof typeof moodMap;
 
 export default function HomePage() {
+<<<<<<< Updated upstream
   const [quote, setQuote] = useState<QuoteData>({
     text: "Loading...",
     author: "",
   });
 
+=======
+  const [quote, setQuote] = useState<QuoteData>({ text: "Please select a mood.", author: "System" });
+>>>>>>> Stashed changes
   const [currentMood, setCurrentMood] = useState<EmojiType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,6 +57,7 @@ export default function HomePage() {
     setIsLoading(true);
 
     try {
+<<<<<<< Updated upstream
       const response = await fetch(
         `http://localhost:3001/api/quotes/random?category=${moodKey}`
       );
@@ -61,8 +73,28 @@ export default function HomePage() {
         author: data.author,
       });
     } catch (error) {
+=======
+      // Filter quotes by selected mood
+      const filteredQuotes = quotes.filter(q => q.category === moodKey);
+
+      if (filteredQuotes.length === 0) {
+        setQuote({
+          text: `No ${moodKey} quotes available right now.`,
+          author: "System"
+        });
+      } else {
+        // Select random quote from filtered results
+        const randomQuote = filteredQuotes[Math.floor(Math.random() * filteredQuotes.length)];
+        setQuote({
+          text: randomQuote.text,
+          author: randomQuote.author,
+        });
+      }
+    } catch (error) {
+      console.error("❌ Fetch error:", error);
+>>>>>>> Stashed changes
       setQuote({
-        text: `No ${moodKey} quotes available right now.`,
+        text: `Error loading quotes.`,
         author: "System",
       });
     }
@@ -70,6 +102,7 @@ export default function HomePage() {
     setIsLoading(false);
   };
 
+<<<<<<< Updated upstream
   // โหลดหน้า → สุ่ม mood อัตโนมัติ
   useEffect(() => {
     const randomEmoji = getRandomEmoji();
@@ -102,6 +135,13 @@ export default function HomePage() {
       fetchRandomQuote(moodMap[randomEmoji]);
     }
   };
+=======
+  // 2. เมื่อคลิกเปลี่ยนอารมณ์
+  const handleMoodChange = (emoji: EmojiType) => {
+    setCurrentMood(emoji);
+    fetchRandomQuote(moodMap[emoji]);
+  };
+>>>>>>> Stashed changes
 
   return (
     <div
@@ -145,12 +185,17 @@ export default function HomePage() {
         </p>
 
         <p className="text-lg md:text-xl text-gray-500 mb-8 md:mb-10 font-normal">
+<<<<<<< Updated upstream
           {quote.author && `- ${quote.author}`}
+=======
+          — {quote.author}
+>>>>>>> Stashed changes
         </p>
 
         <hr className="border-[#000000] mb-8 md:mb-10 opacity-20 mx-auto w-4/5" />
 
         <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-6 font-normal">
+<<<<<<< Updated upstream
 
           {/* Save */}
           <button
@@ -188,6 +233,32 @@ export default function HomePage() {
                 alert("Saved successfully ♡");
               } catch (error) {
                 console.error("Save error:", error);
+=======
+          {/* Save Quote to localStorage */}
+          <button
+            onClick={() => {
+              if (currentMood) {
+                // Save quote to localStorage for dashboard tracking
+                const saved = JSON.parse(localStorage.getItem('savedQuotes') || '[]');
+                
+                // create quote object
+                const newQuote = {
+                  text: quote.text,
+                  author: quote.author,
+                  mood: moodMap[currentMood],
+                  savedAt: Date.now()
+                };
+                
+                // Optionally avoid exact duplicates
+                if (!saved.some((q: any) => q.text === quote.text)) {
+                  localStorage.setItem('savedQuotes', JSON.stringify([...saved, newQuote]));
+                  alert("Saved! ♡");
+                } else {
+                  alert("Already saved! ♡");
+                }
+              } else {
+                alert("Please select a mood first. ♡");
+>>>>>>> Stashed changes
               }
             }}
             className="bg-[#FAFFC7] text-[#000000] px-10 py-3 rounded-full hover:scale-110 transition-all shadow-sm"
@@ -195,7 +266,11 @@ export default function HomePage() {
             ♡ Save
           </button>
 
+<<<<<<< Updated upstream
           {/* Generate */}
+=======
+          {/* Generate (Fetch local quotes instead of API) */}
+>>>>>>> Stashed changes
           <button
             onClick={handleGenerate} 
             className="bg-[#FAFFC7] text-[#000000] px-10 py-3 rounded-full hover:scale-110 transition-all shadow-sm"
