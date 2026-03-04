@@ -16,7 +16,7 @@ interface QuoteData {
 
 const moodMap = {
   "😌": "calm",
-  "😊": "happy",
+  "😊": "happy",//คบเกโคตรมีความสุข
   "🥰": "romantic",
   "🤩": "motivation",
   "🧐": "reflective",
